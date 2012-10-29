@@ -1,5 +1,9 @@
 require ['jquery', 'd3'], ($, d3) ->
-
+  
+  getParams = ->
+    {
+      p: window.location.hash.substr(1)
+    }
 
   class Earthquakes
     c:
@@ -7,14 +11,20 @@ require ['jquery', 'd3'], ($, d3) ->
       height: 580
 
     constructor: ->
+      @date = d3.select('h2')
+
       @svg = d3.select('body').append('svg')
                 .attr('width', @c.width)
                 .attr('height', @c.height)
                 .on('mousedown', @onMouseDown)
 
+      if getParams().p
+        origin = getParams().p.split(',').map (p)->parseFloat(p)
+      else
+        origin = [-71.03, 42.37]
       @projection = d3.geo.azimuthal()
                       .scale(250)
-                      .origin([-71.03, 42.37])
+                      .origin(origin)
                       .mode('orthographic')
                       .translate([@c.width/2, @c.height/2])
 
@@ -51,6 +61,8 @@ require ['jquery', 'd3'], ($, d3) ->
         o0 = @o0
         m1 = [d3.event.pageX, d3.event.pageY]
         o1 = [o0[0] + (m0[0] - m1[0])/8, o0[1] + (m1[1] - m0[1])/8]
+
+        window.location.hash = o1
         @projection.origin(o1)
         @circle.origin(o1)
         @redraw()
@@ -77,6 +89,19 @@ require ['jquery', 'd3'], ($, d3) ->
                         0
                     )
 
+    drawSlider: (extents) =>
+      renderAt = @renderAt
+      @slider = d3.select('body')
+        .append('input')
+          .attr('class', 'timeslider')
+          .attr('type', 'range')
+          .attr('min', extents[0])
+          .attr('max', extents[1])
+          .attr('value', extents[1])
+          .attr('step', 1)
+          .on('change', ->
+            renderAt @value
+          )
 
     drawCountries: =>
       d3.json 'world-countries.json', (collection) =>
@@ -85,15 +110,66 @@ require ['jquery', 'd3'], ($, d3) ->
                   .enter().append('svg:path')
                     .attr('d', @clip)
 
-    onDataCircles: (data) =>
-      @earthquakes = @earthquakes_g.selectAll('circle')
-                      .data(data.features)
 
-      durations =
-        in: 50
-        out: 150
+
+    animateEarthquakes: (data) =>
+      @features = data.features
+      @onDataCircles(@features)
+    
+
+    renderAt: (time) =>
+      @date.html new Date(time*1000).toString()
+      features = @features.filter (d) ->
+                  d.properties.time <= time
+
+      es = @earthquakes_g.selectAll('circle')
+                      .data(features)
+
+      exited = es.exit()
+      exited.remove()
+
+      entered = es.enter()
+      entered
+        .append('svg:circle')
+          .attr('r', 0)
+          .attr('cx', (d) => 
+            @projection(d.geometry.coordinates[0..1])[0]
+          )
+          .attr('cy', (d) =>
+            @projection(d.geometry.coordinates[0..1])[1]
+          )
+        .transition().duration(@c.durations.in)
+          .attr('r', (d) =>
+            if @circle.clip(d)
+              0.0001*Math.pow(10,d.properties.mag)
+            else
+              0
+          )
+        .transition().duration(@c.durations.out).delay(@c.durations.in)
+          .attr('r', (d) =>
+            if @circle.clip(d)
+              d.properties.mag
+            else
+              0
+          )
+
+    onDataCircles: (features) =>
+      @earthquakes = @earthquakes_g.selectAll('circle')
+                      .data(features, (d)->d.id)
+
+      @c.durations =
+        in: 200
+        out: 200
         spacing: 25
-        length: 10000
+        length: 15000
+      durations = @c.durations
+      
+      extent = d3.extent(features, (d) -> d.properties.time)
+      @drawSlider extent
+      
+      @timeScale = d3.scale.linear()
+                    .domain(extent)
+                    .range([0, durations.length])
 
       entered = @earthquakes.enter()
                     .append('svg:circle')
@@ -104,21 +180,24 @@ require ['jquery', 'd3'], ($, d3) ->
                     .attr('cy', (d) =>
                       @projection(d.geometry.coordinates[0..1])[1]
                     )
-                    .on('mouseover', (d) -> console.log d.properties)
-                  .transition().duration(durations.in).delay( (d,i)->i*durations.spacing)
+                  .transition().duration(durations.in).delay( (d,i)=>@timeScale(d.properties.time))
                     .attr('r', (d) =>
                       if @circle.clip(d)
                         0.0001*Math.pow(10,d.properties.mag)
                       else
                         0
                     )
-                  .transition().duration(durations.out).delay( (d,i)->i*durations.spacing+durations.in)
+                  .transition().duration(durations.out).delay( (d,i)=>@timeScale(d.properties.time)+durations.in)
                     .attr('r', (d) =>
                       if @circle.clip(d)
                         d.properties.mag
                       else
                         0
                     )
+                  .each('end', (d) =>
+                    @date.html new Date(d.properties.time*1000).toString()
+                    @slider.attr 'value', d.properties.time
+                  )
                     
 
     onDataPaths: (data) =>
@@ -130,9 +209,8 @@ require ['jquery', 'd3'], ($, d3) ->
                   .attr('d', @clip)
 
   start = ->
-    earthquakes = new Earthquakes
-
-    window.eqfeed_callback = earthquakes.onDataCircles
+    window.earthquakes = new Earthquakes
+    window.eqfeed_callback = earthquakes.animateEarthquakes
 
     $.ajax
       url: 'http://earthquake.usgs.gov/earthquakes/feed/geojsonp/2.5/month'

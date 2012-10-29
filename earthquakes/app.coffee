@@ -98,6 +98,7 @@ require ['jquery', 'd3'], ($, d3) ->
                     .attr('cy', (d) =>
                       @projection(d.geometry.coordinates[0..1])[1]
                     )
+                    .on('mouseover', (d) -> console.log d.properties)
                   .transition().duration(50).delay( (d,i)->i*25)
                     .ease('elastic', 20, 5)
                     .attr('r', (d) =>

@@ -107,6 +107,8 @@
           return _this.projection(d.geometry.coordinates.slice(0, 2))[0];
         }).attr('cy', function(d) {
           return _this.projection(d.geometry.coordinates.slice(0, 2))[1];
+        }).on('mouseover', function(d) {
+          return console.log(d.properties);
         }).transition().duration(50).delay(function(d, i) {
           return i * 25;
         }).ease('elastic', 20, 5).attr('r', function(d) {

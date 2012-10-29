@@ -100,18 +100,32 @@
       };
 
       Earthquakes.prototype.onDataCircles = function(data) {
-        var entered,
+        var durations, entered,
           _this = this;
         this.earthquakes = this.earthquakes_g.selectAll('circle').data(data.features);
+        durations = {
+          "in": 50,
+          out: 150,
+          spacing: 25,
+          length: 10000
+        };
         return entered = this.earthquakes.enter().append('svg:circle').attr('r', 0).attr('cx', function(d) {
           return _this.projection(d.geometry.coordinates.slice(0, 2))[0];
         }).attr('cy', function(d) {
           return _this.projection(d.geometry.coordinates.slice(0, 2))[1];
         }).on('mouseover', function(d) {
           return console.log(d.properties);
-        }).transition().duration(50).delay(function(d, i) {
-          return i * 25;
-        }).ease('elastic', 20, 5).attr('r', function(d) {
+        }).transition().duration(durations["in"]).delay(function(d, i) {
+          return i * durations.spacing;
+        }).attr('r', function(d) {
+          if (_this.circle.clip(d)) {
+            return 0.0001 * Math.pow(10, d.properties.mag);
+          } else {
+            return 0;
+          }
+        }).transition().duration(durations.out).delay(function(d, i) {
+          return i * durations.spacing + durations["in"];
+        }).attr('r', function(d) {
           if (_this.circle.clip(d)) {
             return d.properties.mag;
           } else {

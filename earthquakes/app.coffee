@@ -89,6 +89,12 @@ require ['jquery', 'd3'], ($, d3) ->
       @earthquakes = @earthquakes_g.selectAll('circle')
                       .data(data.features)
 
+      durations =
+        in: 50
+        out: 150
+        spacing: 25
+        length: 10000
+
       entered = @earthquakes.enter()
                     .append('svg:circle')
                     .attr('r', 0)
@@ -99,8 +105,14 @@ require ['jquery', 'd3'], ($, d3) ->
                       @projection(d.geometry.coordinates[0..1])[1]
                     )
                     .on('mouseover', (d) -> console.log d.properties)
-                  .transition().duration(50).delay( (d,i)->i*25)
-                    .ease('elastic', 20, 5)
+                  .transition().duration(durations.in).delay( (d,i)->i*durations.spacing)
+                    .attr('r', (d) =>
+                      if @circle.clip(d)
+                        0.0001*Math.pow(10,d.properties.mag)
+                      else
+                        0
+                    )
+                  .transition().duration(durations.out).delay( (d,i)->i*durations.spacing+durations.in)
                     .attr('r', (d) =>
                       if @circle.clip(d)
                         d.properties.mag

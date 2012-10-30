@@ -135,7 +135,7 @@ require ['jquery', 'd3', 'underscore'], ($, d3, _) ->
           d
 
     drawCountries: =>
-      d3.json '/data/world-countries.json', (collection) =>
+      d3.json '../data/world-countries.json', (collection) =>
         @data = collection.features
         @countries = @countries_g.selectAll('path')
                     .data(@data, (d) -> d.properties.name)

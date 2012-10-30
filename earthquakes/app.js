@@ -123,7 +123,7 @@
 
       Earthquakes.prototype.drawCountries = function() {
         var _this = this;
-        return d3.json('/data/world-countries.json', function(collection) {
+        return d3.json('../data/world-countries.json', function(collection) {
           return _this.countries = _this.countries_g.selectAll('path').data(collection.features).enter().append('svg:path').attr('d', _this.clip);
         });
       };

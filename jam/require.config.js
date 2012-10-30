@@ -9,6 +9,11 @@ var jam = {
             "name": "jquery",
             "location": "../jam/jquery",
             "main": "jquery.js"
+        },
+        {
+            "name": "underscore",
+            "location": "../jam/underscore",
+            "main": "underscore.js"
         }
     ],
     "version": "0.2.11",

@@ -104,7 +104,7 @@ require ['jquery', 'd3'], ($, d3) ->
           )
 
     drawCountries: =>
-      d3.json 'world-countries.json', (collection) =>
+      d3.json '/data/world-countries.json', (collection) =>
         @countries = @countries_g.selectAll('path')
                     .data(collection.features)
                   .enter().append('svg:path')

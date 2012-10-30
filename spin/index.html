@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src='../jam/require.js'></script>
+
+<script src='app.js'></script>
+<style>
+  body {
+    text-align: center;
+    background: #110000;
+  }
+
+  .earth {
+    fill: #0F3349;
+  }
+
+  .info {
+    text-align: left;
+    position: absolute;
+    top: 5px;
+    left: 20px;
+    font-family: "Helvetica Neue", Helvetica, sans;
+    color: #444;
+  }
+  .info h1 {
+    font-size: 20px;
+    font-weight: 200;
+  }
+  .info h2 {
+    font-size: 15px;
+    font-weight: 200;
+  }
+  svg {
+    width: 1024px;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    cursor: pointer;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+  }
+  .earthquakes {
+    fill: none;
+    stroke-width: 1;
+    stroke: #FF6600;
+  }
+  .countries {
+    fill: #BF7524;
+    stroke: #BF7524;
+    stroke-width: 0.75;
+  }
+  input[type=range] {
+    width: 100%;
+  }
+
+  .flight {
+    stroke-width: 2;
+    stroke: white;
+    fill: none;
+  }
+
+  a {
+    text-decoration: none;
+    color: #0066FF;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+  <div class='info'>
+    <h1>Earthquakes in the last month</h1>
+    <h2>&nbsp;</h2>
+    <p>
+      An experiment by <a href="http://twitter.com/philip_roberts">@philip_roberts</a>
+    </p>
+    <p>
+      <a href='#' onclick='window.location.reload()'>Play again</a>
+    </p>
+  </div>
+
+</body>
+</html>

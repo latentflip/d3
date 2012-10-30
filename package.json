@@ -1,0 +1,10 @@
+{
+  "jam" : {
+    "packageDir" : "./jam",
+    "baseUrl" : "err-wut",
+    "dependencies" : {
+      "jquery" : null,
+      "d3" : null
+    }
+  }
+}

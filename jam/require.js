@@ -2044,12 +2044,12 @@ var jam = {
     "packages": [
         {
             "name": "d3",
-            "location": "jam/d3",
+            "location": "../jam/d3",
             "main": "d3.v2.js"
         },
         {
             "name": "jquery",
-            "location": "jam/jquery",
+            "location": "../jam/jquery",
             "main": "jquery.js"
         }
     ],

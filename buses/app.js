@@ -80,8 +80,8 @@
       };
 
       Buses.prototype.c = {
-        width: 1024,
-        height: 768
+        width: 1250,
+        height: 650
       };
 
       Buses.prototype.buildSVG = function() {
@@ -92,7 +92,7 @@
       Buses.prototype.renderGeo = function() {
         var current_center, current_edinburgh, edinburgh, error,
           _this = this;
-        edinburgh = [-3.22, 55.95];
+        edinburgh = [-3.22, 55.925];
         this.xy = d3.geo.mercator().scale(1000000).translate([this.c.width * 0.5, this.c.height * 0.5]);
         current_edinburgh = this.xy(edinburgh);
         current_center = this.xy.translate();
@@ -114,7 +114,7 @@
           ll = _this.xy([parseFloat(stop.longitude), parseFloat(stop.latitude)]);
           return ll;
         };
-        return this.stops.enter().append('circle').attr('class', 'stop').attr('r', 5).attr('cx', function(d) {
+        return this.stops.enter().append('circle').attr('class', 'stop').attr('r', 3).attr('cx', function(d) {
           return stopToLatLong(d)[0];
         }).attr('cy', function(d) {
           return stopToLatLong(d)[1];

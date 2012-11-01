@@ -50,8 +50,8 @@ require ['d3', 'jquery', 'underscore'], (d3, $, _) ->
       @renderStops()
 
     c:
-      width: 1024
-      height: 768
+      width: 1250
+      height: 650
 
     buildSVG: =>
       @svg = d3.select('body').append('svg')
@@ -60,11 +60,8 @@ require ['d3', 'jquery', 'underscore'], (d3, $, _) ->
       @color = d3.scale.category20()
   
     renderGeo: =>
-      edinburgh = [-3.22, 55.95]
+      edinburgh = [-3.22, 55.925]
       @xy = d3.geo.mercator()
-                  #.origin([-3.22, 55.95])
-                  #.scale(50)
-                  #.scale(50000)
                   .scale(1000000)
                   .translate([@c.width*0.5, @c.height*0.5])
       
@@ -100,7 +97,7 @@ require ['d3', 'jquery', 'underscore'], (d3, $, _) ->
       @stops.enter()
               .append('circle')
                 .attr('class', 'stop')
-                .attr('r', 5)
+                .attr('r', 3)
                 .attr('cx', (d) -> stopToLatLong(d)[0])
                 .attr('cy', (d) -> stopToLatLong(d)[1])
                 .attr('fill', (d) => @color(d.group))

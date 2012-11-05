@@ -1,0 +1,14 @@
+.commit circle {
+  stroke-width: 0.25;
+  stroke: black;
+  fill: #FF6600;
+}
+
+.commit line.added {
+  stroke-width: 1;
+  stroke: #33FF00;
+}
+.commit line.deleted {
+  stroke-width: 1;
+  stroke: #FF3300;
+}

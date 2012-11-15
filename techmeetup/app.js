@@ -475,7 +475,7 @@
     };
     philSlide = function() {
       slide('@philip_roberts')();
-      return svg.select('g.slide').append('text').text('←').attr('x', c.width + 500).attr('y', c.height * 0.8).style('text-anchor', 'middle').style('font-size', 200).style('fill', '#FF6600').transition().duration(5000).delay(500).ease('elastic', 10, 10).attr('x', c.width * 0.2);
+      return svg.select('g.slide').append('text').text('<-').attr('x', c.width + 500).attr('y', c.height * 0.8).style('text-anchor', 'middle').style('font-size', 200).style('fill', '#FF6600').transition().duration(5000).delay(500).ease('elastic', 10, 10).attr('x', c.width * 0.2);
     };
     explode = function() {
       svg.selectAll('text').transition().duration(c.transitionLength).attr('x', -500).remove();

@@ -709,7 +709,7 @@ require ['jquery', 'd3', 'underscore'], ($,d3,_) ->
     slide('@philip_roberts')()
 
     svg.select('g.slide').append('text')
-        .text('←')
+        .text('<-')
         .attr('x', c.width+500)
         .attr('y', c.height*0.8)
         .style('text-anchor', 'middle')

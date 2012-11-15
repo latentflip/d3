@@ -27,6 +27,53 @@ require ['d3', 'underscore'], (d3, _) ->
     ]
   }
 
+  width = 960
+  height = 600
+  
+  cluster = d3.layout.cluster()
+              .size([height, width - 160])
+  
+  diagonal = d3.svg.diagonal()
+                .projection( (d) -> [d.y, d.x] )
+  
+  vis = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+          .append("g")
+            .attr("transform", "translate(40, 0)")
+  
+  render = (json) ->
+    nodes = cluster.nodes(json)
+    
+    link = vis.selectAll("path.link")
+                  .data(cluster.links(nodes))
+                .enter().append("path")
+                  .attr("class", "link")
+                  .attr("d", diagonal)
+    
+    node = vis.selectAll("g.node")
+                .data(nodes)
+              .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", (d) -> "translate(" + d.y + "," + d.x + ")" )
+    
+    node.append("circle")
+          .attr("r", 4.5)
+
+    node.append("text")
+        .attr("dx", (d) -> d.children ? -8 : 8 )
+        .attr("dy", 3)
+        .attr("text-anchor", (d) -> d.children ? "end" : "start" )
+        .text( (d) -> d.name )
+
+  render(json)
+  window.addNode = ->
+    json.children.push {
+      name: 'goo'
+    }
+    render(json)
+
+###
 
   c =
     height: 600
@@ -60,33 +107,54 @@ require ['d3', 'underscore'], (d3, _) ->
   nodes = null
 
   render = (data) ->
-    nodes = tree.nodes(json)
-    link = vis.selectAll('path.link')
-            .data(tree.links(nodes))
-          .enter().append('path')
-            .attr('class', 'link')
-            .attr('d', diagonal)
+    d = {} 
+    d.nodes = tree.nodes(data)
+    d.links = tree.links(d.nodes)
+
+    links = vis.selectAll('path.link')
+            .data(d.links, (d)->"#{d.source.id}-#{d.target.id}")
+
+    links.enter().append('path')
+          .attr('class', 'link')
+
+    links
+      .transition().duration(500)
+      .attr('d', diagonal)
+        
 
     nodes = vis.selectAll('g.node')
-              .data(nodes, (d)->d.id)
+              .data(d.nodes, (d)->d.id)
 
-    newNodes = nodes.enter()
 
-    newNodes.append('g')
-      .attr('class', 'node')
+    new_nodes = nodes.enter()
 
-  
+    new_nodes
+        .append('g')
+          .attr('class', 'node')
 
-    newNodes.append('circle')
+    new_nodes
+        .append('circle')
           .attr('r', 4.5)
 
-    newNodes.append('text')
-          .attr('dy', '0.31em')
-          .attr('text-anchor', (d) -> if d.x < 180 then 'start' else 'end' )
-          .attr('transform', (d) -> if d.x < 180 then 'translate(8)' : 'rotate(180)translate(-8)')
-          .text( (d) -> d.name )
+    nodes
+      .transition().duration(500)
+      .attr('transform', (d) ->
+        s = "rotate(#{d.x-90})translate(#{d.y})"
+        console.log s
+        s
+      )
 
-    nodes.attr('transform', (d) -> "rotate(#{d.x-90})translate(#{d.y})")
+    #new_nodes
+    #    .append('text')
+    #      .attr('dy', '0.31em')
+    #      .attr('text-anchor', (d) -> if d.x < 180 then 'start' else 'end' )
+    #      .attr('transform', (d) -> if d.x < 180 then 'translate(8)' : 'rotate(180)translate(-8)')
+    #      .text( (d) -> d.name )
+
+    #nodes.selectAll('text')
+    #      .transition().duration(500)
+    #      .attr('text-anchor', (d) -> if d.x < 180 then 'start' else 'end' )
+    #      .attr('transform', (d) -> if d.x < 180 then 'translate(8)' : 'rotate(180)translate(-8)')
 
 
   render(json)

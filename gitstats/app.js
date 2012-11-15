@@ -9,7 +9,7 @@
   require(['d3', 'underscore'], function(d3, _) {
     var config, svg, x, xaxis, y, yaxis;
     config = {
-      width: 25000,
+      width: 1024,
       height: 500,
       margin: 20
     };
@@ -72,7 +72,7 @@
           return y(d.cumulative_lines);
         }
       });
-      return entered.append('line').attr('class', 'deleted').attr('x1', function(d) {
+      entered.append('line').attr('class', 'deleted').attr('x1', function(d) {
         return x(d.date);
       }).attr('x2', function(d) {
         return x(d.date);
@@ -87,6 +87,35 @@
           return y(d.cumulative_lines);
         }
       });
+      return window.scale = function(n) {
+        var d;
+        n || (n = 2);
+        d = yaxis.domain();
+        yaxis.domain([0, d[1] * n]);
+        commits = svg.selectAll('g.commit');
+        commits.select('circle').transition().duration(2000).attr('cy', function(d) {
+          return y(d.cumulative_lines);
+        });
+        commits.select('line.added').transition().duration(2000).attr('y1', function(d) {
+          return y(d.cumulative_lines);
+        }).attr('y2', function(d) {
+          if (d.insertions) {
+            return y(d.cumulative_lines) - 10 * Math.log(10 * d.insertions);
+          } else {
+            return y(d.cumulative_lines);
+          }
+        });
+        return commits.select('line.deleted').transition().duration(2000).attr('y1', function(d) {
+          return y(d.cumulative_lines);
+        }).attr('y2', function(d) {
+          if (d.deletions) {
+            x = y(d.cumulative_lines) + 10 * Math.log(10 * d.deletions);
+            return x;
+          } else {
+            return y(d.cumulative_lines);
+          }
+        });
+      };
     });
   });
 

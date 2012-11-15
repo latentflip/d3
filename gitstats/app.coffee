@@ -4,7 +4,7 @@ console.jlog = (d) ->
 
 require ['d3', 'underscore'], (d3, _) ->
   config =
-    width: 25000
+    width: 1024
     height: 500
     margin: 20
   
@@ -20,8 +20,7 @@ require ['d3', 'underscore'], (d3, _) ->
           .range([config.margin, config.height-config.margin])
 
   x = xaxis
-  y = (args...) ->
-    config.height - yaxis(args...)
+  y = (args...) -> config.height - yaxis(args...)
 
   d3.json 'gitstats.json', (coll) ->
     data = []
@@ -49,7 +48,6 @@ require ['d3', 'underscore'], (d3, _) ->
                 .append('svg:g')
                 .attr('class', 'commit')
 
-
     entered.append('circle')
               .attr('r', (d)->5)
               .attr('cx', (d)->x(d.date))
@@ -66,7 +64,6 @@ require ['d3', 'underscore'], (d3, _) ->
                   y(d.cumulative_lines) - 10*Math.log(10*d.insertions)
                 else
                   y(d.cumulative_lines)
-
               )
 
     entered.append('line')
@@ -83,4 +80,33 @@ require ['d3', 'underscore'], (d3, _) ->
                   y(d.cumulative_lines)
               )
               
-    
+    window.scale = (n)->
+      n ||= 2
+      d = yaxis.domain()
+      yaxis.domain([0,d[1]*n])
+      commits = svg.selectAll('g.commit')
+
+      commits.select('circle')
+              .transition().duration(2000)
+              .attr('cy', (d)->y(d.cumulative_lines))
+
+      commits.select('line.added')
+              .transition().duration(2000)
+              .attr('y1', (d)->y(d.cumulative_lines))
+              .attr('y2', (d)->
+                if d.insertions
+                  y(d.cumulative_lines) - 10*Math.log(10*d.insertions)
+                else
+                  y(d.cumulative_lines)
+              )
+
+      commits.select('line.deleted')
+              .transition().duration(2000)
+              .attr('y1', (d)->y(d.cumulative_lines))
+              .attr('y2', (d)->
+                if d.deletions
+                  x = y(d.cumulative_lines)+10*Math.log(10*d.deletions)
+                  x
+                else
+                  y(d.cumulative_lines)
+              )

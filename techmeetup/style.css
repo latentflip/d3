@@ -1,0 +1,18 @@
+svg circle {
+  stroke: #FF6600;
+  stroke-width: 1px;
+  fill: none;
+  z-index: 10; }
+svg text {
+  fill: #666;
+  font-family: helvetica;
+  font-size: 20px; }
+svg .countries path {
+  fill: #999; }
+svg .slide text {
+  font-size: 150px; }
+svg .axis text {
+  fill: #000; }
+svg .axis line {
+  stroke: #000;
+  stroke-width: 3; }

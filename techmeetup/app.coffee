@@ -794,5 +794,5 @@ require ['jquery', 'd3', 'underscore'], ($,d3,_) ->
     nextSlide()
     nextS = _.debounce nextSlide, 200
     window.nextS = nextS
-    svg.on('click', nextS)
-    $('body').on('keypress', -> nextS(); false)
+    #svg.on('click', nextS)
+    #$('body').on('keypress', -> nextS(); false)

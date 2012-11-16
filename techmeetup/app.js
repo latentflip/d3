@@ -541,12 +541,7 @@
       slides.push(slide2("questions?", "@philip_roberts"));
       nextSlide();
       nextS = _.debounce(nextSlide, 200);
-      window.nextS = nextS;
-      svg.on('click', nextS);
-      return $('body').on('keypress', function() {
-        nextS();
-        return false;
-      });
+      return window.nextS = nextS;
     });
   });
 

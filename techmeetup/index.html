@@ -17,14 +17,23 @@
 
     </script>
     <style>
-      iframe { position: absolute; top: 5; left: 5}
+      #video { 
+        position: absolute; top: 5; left: 5;
+        font-family: helvetica, sans-serif;
+      }
+      #video iframe {
+        display: block;
+      }
     </style>
   </head>
 
   <body>
 
-    <iframe id='player1' src="http://player.vimeo.com/video/53588708?badge=0&api=1&player_id=player1" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-    <script src="app.js"></script>
+    <div id='video'>
+      <iframe id='player1' src="http://player.vimeo.com/video/53588708?badge=0&api=1&player_id=player1" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+      <a rel='skip' href='#'>Skip to the cool demo</a>
+      <script src="app.js"></script>
+    </div>
 
     <script>
       require(['jquery'], function($) {
@@ -33,6 +42,11 @@
           
           player.addEvent('ready', function() {
             player.addEvent('playProgress', onPlayProgress);
+          });
+
+          $('a[rel=skip]').click(function() {
+            player.api('seekTo', 490);
+            $(this).remove();
           });
 
           var advance_at = [
